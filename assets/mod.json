@@ -1,0 +1,11 @@
+{
+  "name": "SpeedCtlMan",
+  "displayName": "Speed Ctl Man",
+  "author": "konkitoman",
+  "subtitle": "A mod that change the passing of time!",
+  "main": "com.konkito.SpeedCtlMan.SpeedControl",
+  "description": "Default is setting the speed, LCtrl for multiply the speed and LAlt for add, LShift + LCtrl for subdivide and LShift + LAlt to subtract\n\nMultiplayer Supported but every player can control the speed!",
+  "version": "0.1",
+  "hidden": false,
+  "minGameVersion": 136
+}
