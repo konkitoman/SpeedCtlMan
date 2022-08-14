@@ -46,9 +46,7 @@ public class Gui {
                 SpeedControl.speed_multiplier = mult;
             }
 
-            SpeedControl.SpeedSet pack = new SpeedControl.SpeedSet();
-            pack.speed = SpeedControl.speed_multiplier;
-            Vars.net.send(pack, true);
+            Vars.net.send(new SpeedControl.SpeedSet(), true);
 
         });
 
