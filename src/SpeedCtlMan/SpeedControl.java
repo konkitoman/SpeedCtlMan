@@ -1,4 +1,4 @@
-package com.konkito.SpeedCtlMan;
+package SpeedCtlMan;
 
 import arc.Core;
 import arc.Events;

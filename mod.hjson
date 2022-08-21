@@ -1,0 +1,24 @@
+displayName: "SpeedCtlMan",
+subtitle:"Speed control mod!",
+name: "speed-ctl-man",
+author: "konkitoman",
+main: "SpeedCtlMan.SpeedControl",
+repo: "konkitoman/SpeedCtlMan"
+description:
+'''
+Desktop only!
+
+Default: set speed.
+LCtrl: multiply speed.
+LAlt: add speed.
+LShift + LCtrl: divide speed.
+LShift + LAlt: subtract speed.
+
+All player will have the same speed!
+A player need to be admin to control the speed!
+'''
+version: "0.2",
+dependencies: [],
+hidden: false,
+java: true
+minGameVersion: 137

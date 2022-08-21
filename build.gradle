@@ -1,96 +1,62 @@
-plugins {
-    id 'java'
-}
+apply plugin: "java"
 
-group 'com.konkito.SpeedCtlMan'
-version '1.0'
+version '0.2'
 
-sourceSets.main{
-    java.srcDir("src/")
-    resources.srcDir("assets/")
-}
+group 'SpeedCtlMan'
 
-ext{
-    artifactFilename = "SpeedCtlMan.jar"
-
-}
+sourceSets.main.java.srcDirs = ["src"]
 
 repositories {
     mavenCentral()
     maven{url "https://jitpack.io"}
 }
 
+ext{
+    mindustryVersion = "v137"
+}
+
 dependencies {
-    annotationProcessor 'com.github.Anuken:jabel:0.8.0'
-    compileOnly "com.github.Anuken.Mindustry:core:v137"
-    compileOnly "com.github.Anuken.Arc:arc-core:dfcb21ce56"
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
+    compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
 }
 
-jar.archiveFileName.set("$artifactFilename")
+jar{
+    archiveFileName = "${project.archivesBaseName}Desktop.jar"
 
-def isWindows = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")
+    from{
+        configurations.runtimeClasspath.collect{ it.isDirectory() ? it : zipTree(it) }
+    }
 
-//task alphableed doFirst{
-//    exec{
-//        workingDir "$rootDir"
-//        println "Alpha-bleeding sprites..."
-//        if(isWindows){
-//            commandLine("cmd", "/c", "alpha-bleeding-windows.exe", "--replace", "./assets/sprites/")
-//        }else{
-//            commandLine("./alpha-bleed", "./assets/sprites/")
-//        }
-//    }
-//}
+    from(rootDir){
+        include "mod.hjson"
+    }
 
-task dexify(type: Jar){
-    archiveFileName.set("$artifactFilename")
+    from(rootDir){
+        include "icon.png"
+    }
 
-    final File jarArtifact = new File(tasks.jar.archiveFile.get().asFile.parent, "$artifactFilename"),
-               dexedArtifact = new File(tasks.dexify.getTemporaryDir(), "dexed.jar")
+}
 
-    doFirst{
-        //collect dependencies needed for desugaring
-        def files = (configurations.compileClasspath.asList() + configurations.runtimeClasspath.asList() + [new File("$sdkRoot/platforms/android-$sdkVersion/android.jar")])
-
-        exec{
-            workingDir dexedArtifact.parent
-            def command = ["d8", "--min-api", "14"]
-            for(def file : files){
-                command += "--classpath"
-                command += file.path
+task deploy(type : Jar){
+    def fi = new File("$rootDir/mod.hjson")
+    fi.withReader{reader ->
+        def lines = reader.readLines()
+        fi.withWriter { writer ->
+            lines.each {line ->
+                def check = line.split(":")[0].equals("minGameVersion")
+                if (!check) writer.append("$line\r\n")
             }
-
-            command += ["--output", dexedArtifact, jarArtifact]
-
-            if(isWindows){
-                commandLine("cmd", "/c", *command)
-            }else{
-                commandLine(*command)
-            }
+            writer.append("minGameVersion: ${mindustryVersion.split("v")[1]}\r\n")
         }
     }
 
-    from(zipTree(jarArtifact), zipTree(dexedArtifact))
-}
+    dependsOn jar
+    archiveFileName = "${project.archivesBaseName}.jar"
 
-task buildDex dependsOn "build", "dexify"
+    from{ zipTree("$buildDir/libs/${project.archivesBaseName}Desktop.jar") }
 
-task buildMove(dependsOn: build){
     doLast{
-        copy{
-            from "build/libs/raw-BetaMindy.jar"
-            into System.getenv("destination")
-        }
+        delete{delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"}
     }
-}
-
-tasks.withType(JavaCompile){
-    targetCompatibility = 8
-    sourceCompatibility = JavaVersion.VERSION_17
-    options.encoding = "UTF-8"
-    options.compilerArgs += ["-Xlint:deprecation"]
-    if(JavaVersion.current() != JavaVersion.VERSION_1_8){
-        options.compilerArgs.addAll(['--release', '8'])
-    }
-    compileJava.options.fork = true
 }

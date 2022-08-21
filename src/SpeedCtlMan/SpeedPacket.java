@@ -1,4 +1,4 @@
-package com.konkito.SpeedCtlMan;
+package SpeedCtlMan;
 
 import arc.util.Log;
 import arc.util.io.Reads;
