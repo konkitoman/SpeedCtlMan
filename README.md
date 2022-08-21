@@ -1,6 +1,6 @@
 # SpeedCtlMan
 
-![Logo](assets/icon.png)
+![Logo](icon.png)
 Desktop only!!!
 
 * Default: set speed.
