@@ -1,4 +1,5 @@
 package com.konkito.SpeedCtlMan;
+
 import arc.Core;
 import arc.input.KeyCode;
 import arc.scene.ui.Button;
@@ -10,60 +11,61 @@ import mindustry.graphics.Pal;
 import mindustry.ui.Styles;
 
 public class Gui {
-    public static void addButton(Table t, float mult){
+    public static void addButton(Table t, float num) {
         Button button = new Button(Styles.logict);
-        button.label(()->{
-            if (Core.input.keyDown(KeyCode.altLeft)){
-                if (Core.input.keyDown(KeyCode.shiftLeft)){
-                    return "[white]-" + mult + "[]";
-                }else{
-                    return "[white]+" + mult + "[]";
+        button.label(() -> {
+            if (Core.input.keyDown(KeyCode.altLeft)) {
+                if (Core.input.keyDown(KeyCode.shiftLeft)) {
+                    return "[white]-" + num + "[]";
+                } else {
+                    return "[white]+" + num + "[]";
                 }
-            }else if (Core.input.keyDown(KeyCode.controlLeft)){
-                if (Core.input.keyDown(KeyCode.shiftLeft)){
-                    return "[white]/" + mult + "[]";
-                }else{
-                    return "[white]*" + mult + "[]";
+            } else if (Core.input.keyDown(KeyCode.controlLeft)) {
+                if (Core.input.keyDown(KeyCode.shiftLeft)) {
+                    return "[white]/" + num + "[]";
+                } else {
+                    return "[white]*" + num + "[]";
                 }
-            }else{
-                return "[white]" + mult + "[]";
+            } else {
+                return "[white]" + num + "[]";
             }
         });
-        button.clicked(()->{
-            if (Core.input.keyDown(KeyCode.altLeft)){
-                if (Core.input.keyDown(KeyCode.shiftLeft)){
-                    SpeedControl.speed_multiplier -= mult;
-                }else{
-                    SpeedControl.speed_multiplier += mult;
+        button.clicked(() -> {
+            float speed = SpeedControl.speed_multiplier;
+
+            if (Core.input.keyDown(KeyCode.altLeft)) {
+                if (Core.input.keyDown(KeyCode.shiftLeft)) {
+                    speed -= num;
+                } else {
+                    speed += num;
                 }
-            }else if (Core.input.keyDown(KeyCode.controlLeft)){
-                if (Core.input.keyDown(KeyCode.shiftLeft)){
-                     SpeedControl.speed_multiplier /= mult;
-                }else{
-                     SpeedControl.speed_multiplier *= mult;
+            } else if (Core.input.keyDown(KeyCode.controlLeft)) {
+                if (Core.input.keyDown(KeyCode.shiftLeft)) {
+                    speed /= num;
+                } else {
+                    speed *= num;
                 }
-            }else{
-                SpeedControl.speed_multiplier = mult;
+            } else {
+                speed = num;
             }
 
-            Vars.net.send(new SpeedControl.SpeedSet(), true);
-
+            SpeedControl.setSpeed(speed);
         });
 
         t.add(button).size(40, 40).color(Pal.lancerLaser).pad(1).padLeft(3).padRight(3);
     }
-    public Gui(){
+
+    public Gui() {
         Table gui = new Table();
         gui.bottom().left();
 
         Label label = new Label("");
-        label.update(()->{
-            if (SpeedControl.speed_multiplier >= 128){
+        label.update(() -> {
+            if (SpeedControl.speed_multiplier >= 128) {
                 label.setText("[red]" + SpeedControl.speed_multiplier);
-            }
-            else if (SpeedControl.speed_multiplier >= 32){
+            } else if (SpeedControl.speed_multiplier >= 32) {
                 label.setText("[orange]" + SpeedControl.speed_multiplier);
-            }else{
+            } else {
                 label.setText("[white]" + SpeedControl.speed_multiplier);
             }
         });
